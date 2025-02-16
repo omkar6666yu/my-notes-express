@@ -1,0 +1,26 @@
+{% extends "layout.njk" %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5">Add a New Note</h1>
+            <hr>
+            <div class="row">
+                <div class="col-12">
+                    
+                    <form method="post" action="/save">
+                        <textarea name="content" class="form-control" rows="8"></textarea>
+                        {% if error.length > 0  %}
+                            <div style="color: red;">
+                                {{ error }} 
+                            </div>
+                        {% endif %}
+                        <button class="btn btn-primary btn-block my-3 w-100">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

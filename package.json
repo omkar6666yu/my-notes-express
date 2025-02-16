@@ -1,0 +1,26 @@
+{
+  "name": "my-notes-express",
+  "version": "1.0.0",
+  "description": "My notes app in express",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "setup": "node setup.js",
+    "dev": "nodemon app.js --ext js,css,njk"
+  },
+  "keywords": [
+    "notes",
+    "express",
+    "mysql"
+  ],
+  "author": "Shiburaj Pappu",
+  "license": "MIT",
+  "dependencies": {
+    "connect-flash": "^0.1.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "mysql2": "^3.12.0",
+    "nunjucks": "^3.2.4"
+  }
+}

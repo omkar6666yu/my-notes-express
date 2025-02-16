@@ -1,0 +1,49 @@
+{% extends "layout.njk" %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5">Shiburaj Notes</h1>
+            <p class="lead">Please checkout my notes.</p>
+            <hr>
+            <div class="row">
+                <div class="col-12">
+                    <h2>My Notes</h2>
+                    {% if error.length > 0  %}
+                        <div style="color: red; margin:10px;">
+                            {{ error }} 
+                        </div>
+                    {% endif %}
+                    {% if success.length > 0  %}
+                        <div style="color: green; margin:10px;">
+                            {{ success }} 
+                        </div>
+                    {% endif %}
+
+                    {% if notes.length <= 0  %}
+                        <div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-body-secondary">
+                            <div class="col-12 px-0">
+                            <h1 class="display-4 fst-italic">No Notes added yet</h1>
+                            <p class="lead my-3">Start by adding notes...</p>
+                            <a href="/new" class="btn btn-primary">+ Add New Note</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        {% for note in notes %}
+                        <div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-body-secondary">
+                            <div class="col-12 px-0">
+                            <h1 class="display-4 fst-italic">ID : #{{ note.id }}</h1>
+                            <p class="lead my-3">{{ note.content }}</p>
+                            <a href="/delete/{{ note.id}}" class="btn btn-danger">Delete</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
