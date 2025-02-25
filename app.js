@@ -2,10 +2,11 @@ require('dotenv').config();
 const express = require("express");
 const nunjucks = require('nunjucks');
 const app = express();
-const mysql = require("mysql2");
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
+const { getNotes, saveNote, deleteNote } = require('./db');
+
 const port = process.env.APP_PORT || 3000;
 // Configure Nunjucks
 nunjucks.configure('views', {
@@ -35,30 +36,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static("public"));
 
-const db = mysql.createConnection({
-    host: process.env.DB_HOST || "localhost",
-    user: process.env.DB_USER || "root",
-    password: process.env.DB_PASS || "",
-    database: process.env.DB_DATABASE || "notes"
-});
-
-// Connect to MySQL
-db.connect((err) => {
-    if (err) {
-      console.error('Database connection failed:', err);
-      return;
-    }
-    console.log('Connected to MySQL');
-});
-
-app.get("/", (req,res) => {
-    const sql = 'SELECT * FROM notes ORDER BY id DESC';
-    db.query(sql, (err, result) => {
-        if (err) {
-            req.flash('error', 'Error geting data.');
-        }
-        res.render('index', { notes: result });
-    });
+app.get("/", async (req,res) => {
+    let notes = await getNotes();
+    res.render('index', { notes });
     
 });
 
@@ -66,39 +46,23 @@ app.get("/new", (req,res) => {
     res.render('new');
 });
 
-app.post("/save", (req,res) => {
+app.post("/save", async (req,res) => {
     let content = req.body.content;
     if(content == ""){
         req.flash('error', 'Content cannot be empty.');
         return res.redirect('/new');
     }
-    const sql = 'INSERT INTO notes (content) VALUES (?)';
-    db.query(sql, [content], (err, result) => {
-        if (err) {
-            req.flash('error', 'Error storing your note.');
-            return res.redirect('/new');
-        }
-    });
+    await saveNote(content);
     req.flash('success', 'Added successfully.');
     return res.redirect('/');
 });
 
-app.get('/delete/:id', (req,res) => {
+app.get('/delete/:id', async (req,res) => {
     const { id } = req.params;
-    const sql = 'DELETE FROM notes WHERE id = ?';
 
-    db.query(sql, [id], (err, result) => {
-        if (err) {
-            req.flash('error', 'Error deleting note.');
-            return res.redirect('/');
-        }
-        if (result.affectedRows === 0) {
-            req.flash('error', 'Note not found.');
-            return res.redirect('/');
-        }
-        req.flash('success', 'Note deleted successfully.');
-        return res.redirect('/');
-    });
+    await deleteNote(id);
+    req.flash('success', 'Note deleted successfully.');
+    return res.redirect('/');
 });
 
 
